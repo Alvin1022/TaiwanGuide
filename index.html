@@ -157,12 +157,6 @@
                 <button onclick="openMenuModal()" class="h-8 w-8 rounded-full border border-slate-200/80 dark:border-white/10 bg-slate-100/80 dark:bg-[#1e2532] text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs active:scale-95 shrink-0" title="更多設定">
                     <i class="fa-solid fa-ellipsis"></i>
                 </button>
-                <button onclick="setTypeFilter('🏮 觀光夜市')" data-type="🏮 觀光夜市" class="type-btn flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 whitespace-nowrap">
-                    <i class="fa-solid fa-store text-[11px]"></i> <span>觀光夜市</span>
-                </button>
-                <button onclick="setTypeFilter('🌲 景觀與景點')" data-type="🌲 景觀與景點" class="type-btn flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 whitespace-nowrap">
-                    <i class="fa-solid fa-tree text-[11px]"></i> <span>景觀與景點</span>
-                </button>
             </div>
         </div>
     </header>
@@ -272,12 +266,6 @@
                 <button onclick="closeModal('guide-switcher-modal')" class="p-1 text-slate-400 hover:text-slate-600 text-sm">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
-                <button onclick="setTypeFilter('🏮 觀光夜市')" data-type="🏮 觀光夜市" class="type-btn flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 whitespace-nowrap">
-                    <i class="fa-solid fa-store text-[11px]"></i> <span>觀光夜市</span>
-                </button>
-                <button onclick="setTypeFilter('🌲 景觀與景點')" data-type="🌲 景觀與景點" class="type-btn flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 whitespace-nowrap">
-                    <i class="fa-solid fa-tree text-[11px]"></i> <span>景觀與景點</span>
-                </button>
             </div>
 
             <div class="space-y-2 text-xs">
@@ -353,12 +341,6 @@
                 <button onclick="closeModal('place-modal')" class="p-1 text-slate-400 hover:text-slate-600 text-sm">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
-                <button onclick="setTypeFilter('🏮 觀光夜市')" data-type="🏮 觀光夜市" class="type-btn flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 whitespace-nowrap">
-                    <i class="fa-solid fa-store text-[11px]"></i> <span>觀光夜市</span>
-                </button>
-                <button onclick="setTypeFilter('🌲 景觀與景點')" data-type="🌲 景觀與景點" class="type-btn flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 whitespace-nowrap">
-                    <i class="fa-solid fa-tree text-[11px]"></i> <span>景觀與景點</span>
-                </button>
             </div>
 
             <form id="place-form" onsubmit="handleSavePlace(event)" class="space-y-2.5 text-xs">
@@ -426,12 +408,6 @@
                 <button onclick="closeModal('menu-modal')" class="p-1 text-slate-400 hover:text-slate-600 text-sm">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
-                <button onclick="setTypeFilter('🏮 觀光夜市')" data-type="🏮 觀光夜市" class="type-btn flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 whitespace-nowrap">
-                    <i class="fa-solid fa-store text-[11px]"></i> <span>觀光夜市</span>
-                </button>
-                <button onclick="setTypeFilter('🌲 景觀與景點')" data-type="🌲 景觀與景點" class="type-btn flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 whitespace-nowrap">
-                    <i class="fa-solid fa-tree text-[11px]"></i> <span>景觀與景點</span>
-                </button>
             </div>
             <!-- Layout Mode Selection in Menu -->
             <div class="p-2.5 rounded-2xl bg-slate-50 dark:bg-[#141820] border border-slate-200/60 dark:border-white/5 space-y-1.5">
@@ -480,12 +456,6 @@
             <div class="flex items-center gap-2 pt-1 text-xs font-bold">
                 <button onclick="closeModal('confirm-modal')" class="flex-1 py-2 rounded-xl border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300">取消</button>
                 <button onclick="executeResetData()" class="flex-1 py-2 rounded-xl bg-rose-600 text-white shadow-sm">確定重置</button>
-                <button onclick="setTypeFilter('🏮 觀光夜市')" data-type="🏮 觀光夜市" class="type-btn flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 whitespace-nowrap">
-                    <i class="fa-solid fa-store text-[11px]"></i> <span>觀光夜市</span>
-                </button>
-                <button onclick="setTypeFilter('🌲 景觀與景點')" data-type="🌲 景觀與景點" class="type-btn flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 whitespace-nowrap">
-                    <i class="fa-solid fa-tree text-[11px]"></i> <span>景觀與景點</span>
-                </button>
             </div>
         </div>
     </div>
@@ -606,7 +576,7 @@
         function initData() {
             initTheme();
             initLayoutMode();
-            const stored = localStorage.getItem('tw_places_v3');
+            const stored = localStorage.getItem('tw_places_v4');
             if (stored) {
                 try {
                     const loaded = JSON.parse(stored);
@@ -621,6 +591,7 @@
             }
 
             saveToLocalStorage();
+            updateCategoryTabCounts();
             renderHotTags();
             applyFilters();
 
@@ -639,9 +610,37 @@
         }
 
         function saveToLocalStorage() {
-            localStorage.setItem('tw_places_v3', JSON.stringify(placesState));
+            localStorage.setItem('tw_places_v4', JSON.stringify(placesState));
             const pill = document.getElementById('header-count-pill');
             if (pill) pill.innerText = `${placesState.length} 處`;
+        }
+
+        function updateCategoryTabCounts() {
+            const regionPlaces = (currentRegion === 'ALL' || currentRegion === '全部區域' || currentRegion === '全桃園')
+                ? placesState
+                : placesState.filter(item => (item.region === currentRegion || item.district === currentRegion));
+
+            const allBtn = document.querySelector('#category-tabs button[data-type="ALL"]');
+            if (allBtn) {
+                const allSpan = allBtn.querySelector('span');
+                if (allSpan) allSpan.innerText = `全部 (${regionPlaces.length})`;
+            }
+
+            document.querySelectorAll('#category-tabs button').forEach(btn => {
+                const type = btn.getAttribute('data-type');
+                if (type && type !== 'ALL') {
+                    const count = regionPlaces.filter(p => p.type === type).length;
+                    const span = btn.querySelector('span');
+                    if (span) {
+                        let baseName = btn.getAttribute('data-name');
+                        if (!baseName) {
+                            baseName = span.innerText.replace(/\s*\(\d+\)/, '').trim();
+                            btn.setAttribute('data-name', baseName);
+                        }
+                        span.innerText = `${baseName} (${count})`;
+                    }
+                }
+            });
         }
 
         function renderHotTags() {
@@ -650,7 +649,6 @@
 
             const tagCounts = {};
 
-            // 嚴格排除第一行已有的地區名稱與主要分類名稱，第二行只顯示純特色/主題標籤
             const EXCLUDED_TAGS = new Set([
                 '#全桃園', '#桃園', '#桃園市', '#桃園區', '#中壢', '#中壢區', '#八德', '#八德區',
                 '#大溪', '#大溪區', '#平鎮', '#平鎮區', '#復興', '#復興區', '#青埔', '#青埔高鐵',
@@ -669,18 +667,28 @@
                 '#觀光夜市', '#景觀與景點', '#特色私房推薦'
             ]);
 
-            placesState.forEach(item => {
+            const regionPlaces = (currentRegion === 'ALL' || currentRegion === '全部區域' || currentRegion === '全桃園')
+                ? placesState
+                : placesState.filter(item => (item.region === currentRegion || item.district === currentRegion));
+
+            if (currentTag !== 'ALL') {
+                const tagStillExists = regionPlaces.some(p => Array.isArray(p.tags) && p.tags.some(t => t.toLowerCase() === currentTag.toLowerCase()));
+                if (!tagStillExists) currentTag = 'ALL';
+            }
+
+            regionPlaces.forEach(item => {
                 if (Array.isArray(item.tags)) {
                     item.tags.forEach(t => {
                         let tag = t.trim();
                         if (!tag.startsWith('#')) tag = '#' + tag;
                         if (!EXCLUDED_TAGS.has(tag) && !EXCLUDED_TAGS.has(tag.replace('#', ''))) {
-                        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
-                    }
+                            tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+                        }
                     });
                 }
             });
 
+            const minCount = (regionPlaces.length >= 20) ? 2 : 1;
             const sortedTags = Object.keys(tagCounts)
                 .filter(tag => tagCounts[tag] >= 2)
                 .sort((a, b) => tagCounts[b] - tagCounts[a])
@@ -708,6 +716,8 @@
                     btn.className = 'region-btn shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium transition bg-white dark:bg-[#1e2532] text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-white/10';
                 }
             });
+            updateCategoryTabCounts();
+            renderHotTags();
             applyFilters();
         }
 
@@ -747,6 +757,7 @@
             currentTag = 'ALL';
             setRegionFilter('全部區域');
             setTypeFilter('ALL');
+            updateCategoryTabCounts();
             renderHotTags();
             applyFilters();
         }
