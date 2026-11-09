@@ -496,6 +496,146 @@
         let currentTag = 'ALL';
         let currentLayoutMode = 'auto';
 
+        function initTheme() {
+            const savedTheme = localStorage.getItem('tw_theme') || 'light';
+            setTheme(savedTheme);
+        }
+
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            setTheme(current === 'dark' ? 'light' : 'dark');
+        }
+
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('tw_theme', theme);
+            const icon = document.getElementById('theme-icon');
+            const text = document.getElementById('theme-text');
+            const btn = document.getElementById('theme-toggle-btn');
+            
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                if (icon) icon.className = 'fa-solid fa-sun text-amber-400 text-xs';
+                if (text) text.innerText = '淺色';
+                if (btn) btn.setAttribute('title', '切換為淺色模式');
+            } else {
+                document.documentElement.classList.remove('dark');
+                if (icon) icon.className = 'fa-solid fa-moon text-indigo-500 text-xs';
+                if (text) text.innerText = '深色';
+                if (btn) btn.setAttribute('title', '切換為深色模式');
+            }
+        }
+
+        function initLayoutMode() {
+            const saved = localStorage.getItem('tw_layout_mode') || 'auto';
+            setLayoutMode(saved, false);
+        }
+
+        function toggleLayoutMode() {
+            const modes = ['auto', 'desktop', 'mobile'];
+            const nextIdx = (modes.indexOf(currentLayoutMode) + 1) % modes.length;
+            setLayoutMode(modes[nextIdx], true);
+        }
+
+        function setLayoutMode(mode, showNotice = true) {
+            currentLayoutMode = mode;
+            localStorage.setItem('tw_layout_mode', mode);
+
+            const containers = document.querySelectorAll('.app-container');
+            const grids = document.querySelectorAll('.app-grid');
+            const icon = document.getElementById('layout-icon');
+            const text = document.getElementById('layout-text');
+
+            ['auto', 'mobile', 'desktop'].forEach(m => {
+                const b = document.getElementById(`layout-btn-${m}`);
+                if (b) {
+                    if (m === mode) {
+                        b.className = 'py-1.5 px-1 rounded-xl text-center font-bold border transition bg-sky-600 text-white shadow-sm';
+                    } else {
+                        b.className = 'py-1.5 px-1 rounded-xl text-center font-semibold border transition bg-white dark:bg-[#1e2532] text-slate-700 dark:text-slate-300 border-slate-200/80 dark:border-white/10';
+                    }
+                }
+            });
+
+            if (mode === 'mobile') {
+                containers.forEach(c => {
+                    c.classList.remove('md:max-w-5xl', 'lg:max-w-7xl');
+                    c.classList.add('max-w-xl');
+                });
+                grids.forEach(g => {
+                    g.classList.remove('md:grid-cols-2', 'lg:grid-cols-3');
+                    g.classList.add('grid-cols-1');
+                });
+                if (icon) icon.className = 'fa-solid fa-mobile-screen text-sky-500 text-xs';
+                if (text) text.innerText = '手機版';
+                if (showNotice) showToast('已切換為：手機精簡模式 📱');
+            } else if (mode === 'desktop') {
+                containers.forEach(c => {
+                    c.classList.remove('max-w-xl');
+                    c.classList.add('max-w-5xl', 'lg:max-w-7xl');
+                });
+                grids.forEach(g => {
+                    g.classList.remove('grid-cols-1');
+                    g.classList.add('grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3');
+                });
+                if (icon) icon.className = 'fa-solid fa-desktop text-sky-500 text-xs';
+                if (text) text.innerText = '寬螢幕';
+                if (showNotice) showToast('已切換為：電腦寬版模式 🖥️');
+            } else {
+                containers.forEach(c => {
+                    c.classList.add('max-w-xl', 'md:max-w-5xl', 'lg:max-w-7xl');
+                });
+                grids.forEach(g => {
+                    g.classList.add('grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3');
+                });
+                if (icon) icon.className = 'fa-solid fa-sliders text-sky-600 text-xs';
+                if (text) text.innerText = '自適應';
+                if (showNotice) showToast('已切換為：自動適應模式 ⚡');
+            }
+        }
+
+        function initData() {
+            initTheme();
+            initLayoutMode();
+            const stored = localStorage.getItem('tw_places_v6');
+            if (stored) {
+                try {
+                    const loaded = JSON.parse(stored);
+                    const existingNames = new Set(loaded.map(p => p.name));
+                    const missingDefaults = DEFAULT_PLACES.filter(p => !existingNames.has(p.name));
+                    placesState = [...loaded, ...missingDefaults];
+                } catch (e) {
+                    placesState = [...DEFAULT_PLACES];
+                }
+            } else {
+                placesState = [...DEFAULT_PLACES];
+            }
+
+            saveToLocalStorage();
+            updateCategoryTabCounts();
+            renderHotTags();
+            applyFilters();
+
+            window.addEventListener('scroll', () => {
+                const btn = document.getElementById('back-to-top-btn');
+                if (btn) {
+                    if (window.scrollY > 300) {
+                        btn.classList.remove('opacity-0', 'pointer-events-none');
+                        btn.classList.add('opacity-100', 'pointer-events-auto');
+                    } else {
+                        btn.classList.add('opacity-0', 'pointer-events-none');
+                        btn.classList.remove('opacity-100', 'pointer-events-auto');
+                    }
+                }
+            });
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('tw_places_v6', JSON.stringify(placesState));
+            const pill = document.getElementById('header-count-pill');
+            if (pill) pill.innerText = `${placesState.length} 處`;
+        }
+
         function getActiveScopePlaces() {
             if (currentRegion === 'ALL' || currentRegion === '全部區域') {
                 return placesState;
@@ -647,6 +787,34 @@
             }).join('');
         }
 
+        function setTypeFilter(type) {
+            currentType = type;
+            document.querySelectorAll('#category-tabs button').forEach(btn => {
+                const btnType = btn.getAttribute('data-type');
+                if (btnType === type) {
+                    btn.className = 'type-btn active flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 bg-white dark:bg-[#283241] text-sky-700 dark:text-sky-400 shadow-sm font-bold whitespace-nowrap';
+                } else {
+                    btn.className = 'type-btn flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 whitespace-nowrap';
+                }
+            });
+            applyFilters();
+        }
+
+        function setTagFilter(tag) {
+            currentTag = (currentTag === tag) ? 'ALL' : tag;
+            renderHotTags();
+            applyFilters();
+        }
+
+        function clearSearch() {
+            const input = document.getElementById('search-input');
+            if (input) {
+                input.value = '';
+                document.getElementById('clear-search-btn')?.classList.add('hidden');
+                applyFilters();
+            }
+        }
+
         function resetAllFilters() {
             document.getElementById('search-input').value = '';
             document.getElementById('clear-search-btn')?.classList.add('hidden');
@@ -705,10 +873,261 @@
                 return true;
             });
 
-            const badge = document.getElementById('filtered-count-badge');
-            if (badge) badge.innerText = `共 ${filtered.length} 處推薦地點`;
+            renderPlacesGrid(filtered);
+        }
 
-            renderCards(filtered);
+        function renderPlacesGrid(list) {
+            const grid = document.getElementById('places-grid');
+            const noResults = document.getElementById('no-results-msg');
+            const countBadge = document.getElementById('filtered-count-badge');
+
+            if (countBadge) countBadge.innerText = `共 ${list.length} 處推薦地點`;
+
+            if (list.length === 0) {
+                grid.innerHTML = '';
+                noResults?.classList.remove('hidden');
+                return;
+            }
+
+            noResults?.classList.add('hidden');
+
+            grid.innerHTML = list.map(item => {
+                const tagsHtml = (item.tags || []).map(t => {
+                    return `<span onclick="setTagFilter('${t}')" class="cursor-pointer px-2 py-0.5 rounded-md text-[10.5px] font-medium bg-slate-100 dark:bg-[#141820] text-slate-500 dark:text-slate-400 hover:text-sky-600 transition">
+                        ${t}
+                    </span>`;
+                }).join(' ');
+
+                const mapUrl = item.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.name + ' ' + (item.address||''))}`;
+
+                return `
+                <div class="ui-surface rounded-2xl p-4 transition-all">
+                    <div class="flex items-center justify-between gap-2 mb-2">
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            <span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/40">
+                                ${item.region}
+                            </span>
+                            <span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold bg-orange-50 dark:bg-orange-950/40 text-orange-800 dark:text-orange-300 border border-orange-200/60 dark:border-orange-800/40">
+                                ${item.type}
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-400 text-xs font-bold shrink-0">
+                            <i class="fa-solid fa-star text-[10px] text-amber-500"></i> ${item.rating || '4.5'}
+                        </div>
+                    </div>
+
+                    <h4 class="text-[15.5px] font-bold text-slate-900 dark:text-white leading-snug tracking-tight mb-1">
+                        ${item.name}
+                    </h4>
+
+                    <p class="text-[11.5px] text-slate-500 dark:text-slate-400 mb-2.5 flex items-center gap-1.5">
+                        <i class="fa-regular fa-compass text-slate-400 text-[11px]"></i>
+                        <span class="truncate">${item.address || '在地精選地點'}</span>
+                    </p>
+
+                    ${item.note ? `
+                    <div class="note-block p-2.5 rounded-r-xl text-xs leading-relaxed mb-3">
+                        ${item.note}
+                    </div>
+                    ` : ''}
+
+                    <div class="flex flex-wrap gap-1 mb-3">
+                        ${tagsHtml}
+                    </div>
+
+                    <div class="flex items-center justify-between pt-2.5 border-t border-slate-100 dark:border-white/5">
+                        <a href="${mapUrl}" target="_blank" class="px-3.5 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold shadow-sm active:scale-95 transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-location-arrow text-[10px]"></i> 開啟地圖導航
+                        </a>
+
+                        <div class="flex items-center gap-1">
+                            <button onclick="editPlace('${item.id}')" class="p-2 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 active:scale-90" title="編輯">
+                                <i class="fa-solid fa-pen text-xs"></i>
+                            </button>
+                            <button onclick="deletePlace('${item.id}')" class="p-2 rounded-lg text-slate-400 hover:text-rose-600 active:scale-90" title="刪除">
+                                <i class="fa-solid fa-trash-can text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function openAddModal() {
+            document.getElementById('modal-title').innerText = '新增私房地點';
+            document.getElementById('form-id').value = '';
+            document.getElementById('form-name').value = '';
+            document.getElementById('form-region').value = '雙北/基隆';
+            document.getElementById('form-type').value = '🍜 在地小吃';
+            document.getElementById('form-rating').value = '4.5';
+            document.getElementById('form-tags').value = '';
+            document.getElementById('form-address').value = '';
+            document.getElementById('form-mapurl').value = '';
+            document.getElementById('form-note').value = '';
+            document.getElementById('place-modal').classList.remove('hidden');
+        }
+
+        function editPlace(id) {
+            const item = placesState.find(p => p.id === id);
+            if (!item) return;
+
+            document.getElementById('modal-title').innerText = '編輯私房地點';
+            document.getElementById('form-id').value = item.id;
+            document.getElementById('form-name').value = item.name || '';
+            document.getElementById('form-region').value = item.region || '';
+            document.getElementById('form-type').value = item.type || '';
+            document.getElementById('form-rating').value = item.rating || 4.5;
+            document.getElementById('form-tags').value = Array.isArray(item.tags) ? item.tags.join(', ') : '';
+            document.getElementById('form-address').value = item.address || '';
+            document.getElementById('form-mapurl').value = item.mapUrl || '';
+            document.getElementById('form-note').value = item.note || '';
+
+            document.getElementById('place-modal').classList.remove('hidden');
+        }
+
+        function handleSavePlace(e) {
+            e.preventDefault();
+            const id = document.getElementById('form-id').value;
+            const name = document.getElementById('form-name').value.trim();
+            const region = document.getElementById('form-region').value;
+            const type = document.getElementById('form-type').value;
+            const rating = parseFloat(document.getElementById('form-rating').value) || 4.5;
+            const tagsRaw = document.getElementById('form-tags').value;
+            const address = document.getElementById('form-address').value.trim();
+            const mapUrl = document.getElementById('form-mapurl').value.trim();
+            const note = document.getElementById('form-note').value.trim();
+
+            const tags = tagsRaw.split(/[,，]/)
+                .map(t => t.trim())
+                .filter(t => t.length > 0)
+                .map(t => t.startsWith('#') ? t : '#' + t);
+
+            if (id) {
+                const idx = placesState.findIndex(p => p.id === id);
+                if (idx !== -1) {
+                    placesState[idx] = { ...placesState[idx], name, region, type, rating, tags, address, mapUrl, note };
+                    showToast('地點已更新！');
+                }
+            } else {
+                const newId = 'custom-' + Date.now();
+                placesState.unshift({
+                    id: newId,
+                    name,
+                    region,
+                    type,
+                    rating,
+                    tags,
+                    address,
+                    mapUrl: mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + ' ' + address)}`,
+                    note
+                });
+                showToast('已新增私房地點！');
+            }
+
+            saveToLocalStorage();
+            closeModal('place-modal');
+            renderHotTags();
+            applyFilters();
+        }
+
+        function deletePlace(id) {
+            const item = placesState.find(p => p.id === id);
+            if (!item) return;
+            if (confirm(`確定要刪除「${item.name}」嗎？`)) {
+                placesState = placesState.filter(p => p.id !== id);
+                saveToLocalStorage();
+                renderHotTags();
+                applyFilters();
+                showToast('已刪除地點');
+            }
+        }
+
+        function openMenuModal() {
+            document.getElementById('menu-modal').classList.remove('hidden');
+        }
+
+        function confirmResetModal() {
+            closeModal('menu-modal');
+            document.getElementById('confirm-modal').classList.remove('hidden');
+        }
+
+        function executeResetData() {
+            placesState = [...DEFAULT_PLACES];
+            saveToLocalStorage();
+            closeModal('confirm-modal');
+            renderHotTags();
+            applyFilters();
+            showToast('已重置回預設地點');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId)?.classList.add('hidden');
+        }
+
+        function exportJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(placesState, null, 2));
+            const dlAnchor = document.createElement('a');
+            dlAnchor.setAttribute("href", dataStr);
+            dlAnchor.setAttribute("download", `tw_places_${new Date().toISOString().slice(0,10)}.json`);
+            dlAnchor.click();
+            closeModal('menu-modal');
+            showToast('已下載備份 JSON 檔案');
+        }
+
+        function importJSON(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const imported = JSON.parse(event.target.result);
+                    if (Array.isArray(imported)) {
+                        placesState = imported;
+                        saveToLocalStorage();
+                        renderHotTags();
+                        applyFilters();
+                        closeModal('menu-modal');
+                        showToast(`成功匯入 ${imported.length} 處地點！`);
+                    }
+                } catch (err) {
+                    alert('JSON 格式錯誤，無法讀取！');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            if (!toast) return;
+            toast.innerText = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 2200);
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         
+        function openGuideSwitcherModal() {
+            document.getElementById('guide-switcher-modal')?.classList.remove('hidden');
+        }
+
+        function navigateToGuide(guideKey) {
+            const isLocal = window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            if (isLocal) {
+                window.location.href = `../${guideKey}/index.html`;
+            } else {
+                const org = 'Alvin1022';
+                window.location.href = `https://${org}.github.io/${guideKey}/`;
+            }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', initData);
+    </script>
+</body>
+</html>
